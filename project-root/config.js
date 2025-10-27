@@ -1,13 +1,10 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize(
-  "be_movie_db",
-  "be_movie_user",
-  "MovieApp@2025",
-  {
-    host: "localhost",
-    dialect: "mysql",
-  }
-);
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: "mysql",
+  dialectOptions: {
+    ssl: { rejectUnauthorized: false },
+  },
+});
 
 module.exports = sequelize;

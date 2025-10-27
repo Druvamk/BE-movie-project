@@ -1,7 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const sequelize = require("./config"); // Import Sequelize connection
-require("dotenv").config();
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
