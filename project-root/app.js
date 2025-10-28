@@ -1,24 +1,20 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const app = express();
-const sequelize = require("./config"); // Import Sequelize connection
+const sequelize = require("./config");
 
-// Middleware to parse JSON request bodies
+app.use(cors());
 app.use(express.json());
 
-// Import movie routes
 const movieRoutes = require("./routes/movieRoutes");
 
-// Import auth routes
 const authRoutes = require("./routes/authRoutes");
 
-// Use movie routes under /api/movies path
 app.use("/api/movies", movieRoutes);
 
-// Use auth routes under /api/auth path
 app.use("/api/auth", authRoutes);
 
-// Basic test route for API health check
 app.get("/", (req, res) => {
   res.send("API Running");
 });

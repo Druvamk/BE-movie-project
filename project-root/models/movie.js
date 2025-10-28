@@ -41,8 +41,8 @@ const Movie = sequelize.define(
   },
   {
     timestamps: true,
-    tableName: "movies", // explicitly naming the table
-    underscored: false, // use camelCase in model, snake_case in DB if needed
+    tableName: "movies",
+    underscored: false,
   }
 );
 

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
-const JWT_SECRET = process.env.JWT_SECRET; // Replace with env variable in production
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const registerUser = async (req, res) => {
   const { username, password } = req.body;
@@ -14,16 +14,13 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    // Check if a user with the same username already exists
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res.status(409).json({ message: "Username already taken." });
     }
 
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user record
     const user = await User.create({ username, passwordHash: hashedPassword });
 
     return res
