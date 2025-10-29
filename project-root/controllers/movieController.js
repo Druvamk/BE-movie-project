@@ -1,4 +1,5 @@
 const Movie = require("../models/movie");
+const { Op, fn, col, where } = require("sequelize");
 
 exports.createMovie = async (req, res) => {
   try {
@@ -9,14 +10,26 @@ exports.createMovie = async (req, res) => {
   }
 };
 
-// Get all movies with pagination
+// Get all movies with pagination and optional search filter
 exports.getMovies = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * limit;
+  const search = (req.query.search || "").toLowerCase();
 
   try {
-    const { count, rows } = await Movie.findAndCountAll({ limit, offset });
+    const { count, rows } = await Movie.findAndCountAll({
+      where: {
+        [Op.or]: [
+          where(fn("LOWER", col("title")), { [Op.like]: `%${search}%` }),
+          where(fn("LOWER", col("director")), { [Op.like]: `%${search}%` }),
+        ],
+      },
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
     res.json({
       total: count,
       page,
@@ -28,7 +41,6 @@ exports.getMovies = async (req, res) => {
   }
 };
 
-// Get a movie by id
 exports.getMovieById = async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -39,7 +51,6 @@ exports.getMovieById = async (req, res) => {
   }
 };
 
-// Update a movie
 exports.updateMovie = async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
@@ -51,7 +62,6 @@ exports.updateMovie = async (req, res) => {
   }
 };
 
-// Delete a movie
 exports.deleteMovie = async (req, res) => {
   try {
     const movie = await Movie.findByPk(req.params.id);
